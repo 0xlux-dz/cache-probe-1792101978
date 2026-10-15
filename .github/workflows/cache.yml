@@ -1,0 +1,19 @@
+name: cacheprobe
+on: [push, workflow_dispatch, pull_request]
+jobs:
+  c:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache/restore@v4
+        id: r
+        with:
+          path: cc.txt
+          key: probe-key
+      - run: |
+          echo "HIT=${{ steps.r.outputs.cache-hit }}"
+          cat cc.txt || echo NOCACHE
+      - run: echo "PAYLOAD:${{ github.ref }}" > cc.txt
+      - uses: actions/cache/save@v4
+        with:
+          path: cc.txt
+          key: probe-key
